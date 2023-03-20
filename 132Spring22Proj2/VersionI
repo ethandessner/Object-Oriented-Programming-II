@@ -1,0 +1,161 @@
+//VERSION I
+//import java.util.List;
+//import java.util.ArrayList;
+//import java.util.Iterator;
+//
+//public class MinimumSnippet {
+//	//	Iterable<String> instTerms;
+//	//	Iterable<String> instIterator = instTerms.iterator();
+//	ArrayList<String> finalSnippet = new ArrayList<String>();
+//	int finalSnippetLength;
+//	Iterable <String> documentList;
+//	List<String> termList;
+//	
+//	
+//	public MinimumSnippet(Iterable<String> document, List<String> terms) {
+//		int currentSnipLength;
+//		int snipsFound = 0;
+//		int minPossLength = terms.size();
+//		ArrayList<String> docList = new ArrayList<String>();
+//		for(String element : document) {
+//			docList.add(element);
+//		}
+//		//ensures that the first snippet created will always been smaller
+//		int snippetMinLength = docList.size() + 1;
+//		ArrayList<String> snippet = new ArrayList<String>();
+//		ArrayList<Integer> termInds = new ArrayList<Integer>(terms.size());
+//		ArrayList<String> minSnipFinal;
+//		//minSnipInds can be split into a max and min variable
+//		ArrayList<Integer> minSnipInds;
+//		int indexOfLastTerm = 0;
+//		for(String currElm : docList) {
+//			if(terms.contains(currElm)) {
+//				indexOfLastTerm = docList.indexOf(currElm);
+//			}
+//		}
+//		Iterator<String> iterator = document.iterator();
+//		if(terms.size() == 0) {
+//			throw new IllegalArgumentException("Terms is empty!");
+//		}else {
+//			//ensures that the last possible snippet will have the last term
+//			//account for if the last term doesn't make a full snippet - say that the current minLength is the final one
+//			//or create a condition that in order for minLength to be calculated you need all terms
+//		}//while((!(termInds.contains(indexOfLastTerm))) && snippetMinLength != terms.size()){
+//		for(String current : docList) {
+//			while(iterator.hasNext()) {
+//				if(terms.contains(current) && !(snippet.containsAll(terms)) && !(snippet.contains(current))) {
+//					snippet.add(current);
+//					termInds.add(snippet.indexOf(current));
+//				}else if(snippet.contains(current) && !(snippet.containsAll(terms))) {
+//					termInds.add(snippet.indexOf(current));
+//					snippet.clear();
+//					current = docList.get(termInds.get(1));
+//					termInds.clear();
+//				}else {
+//					snipsFound++;
+//					//if this is the first snippet found, minSnipLength is set to the length of the current snippet
+//					if(snipsFound == 1) {
+//						snippetMinLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+//						minSnipInds = new ArrayList<Integer>(termInds);
+//						minSnipFinal = createMinSnip(minSnipInds, docList);
+//						finalSnippet = minSnipFinal;
+//						//once another snippet has been found, that length is compared to the length of the previous snippet
+//					}else if(snipsFound > 1) {
+//						currentSnipLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+//						if(currentSnipLength < snippetMinLength) {
+//							snippetMinLength = currentSnipLength;
+//							minSnipInds = new ArrayList<Integer>(termInds);
+//							minSnipFinal = createMinSnip(minSnipInds, docList);
+//							finalSnippet = minSnipFinal;
+//						}
+//					}
+//
+//					//					if(!(termInds.contains(indexOfLastTerm)) || !(snippetMinLength == terms.size())) {
+//					//starts searching for another snippet starting with the second index of the current snippet
+//					current = snippet.get(1);	
+//					//clears current snippet
+//					termInds.clear();
+//					snippet.clear();
+//					//					}else if(termInds.contains(indexOfLastTerm) && snippet.containsAll(terms)) {
+//					//						
+//					//					}
+//				}
+//				//				if(snippet.containsAll(terms) && (!(termInds.contains(indexOfLastTerm)))) {
+//				//					snippetMinLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+//				//				}else if(snippet.containsAll(terms) && termInds.contains(indexOfLastTerm))
+//			}
+//		}
+//
+//		//	}
+//		//snippetMinLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+//
+//		//find index of last term in the document - if that term is in the termInds array - that is the last possible
+//		//snippet that can be found
+//		//once a snippet is found, set current equal to the second term in the snippet - once another snippet
+//		//is found set snippetMinLength equal to the difference of the new snippet
+//		//repeat until the last term is in a snippet
+//		//what if the last term
+//
+//		//		ArrayList<String> minSnipFinal = new ArrayList<String>();
+//		//		for(int x : minSnipInds) {
+//		//			minSnipFinal.add(docList.get(x));
+//		//		}
+//		finalSnippetLength = snippetMinLength;
+//		System.out.println(finalSnippet);
+//		System.out.println(finalSnippetLength);
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//	}
+//	private ArrayList<String> createMinSnip(ArrayList<Integer> minSnipIndicies, ArrayList<String> currentDoc) {
+//		ArrayList<String> minSnipFinal = new ArrayList<String>();
+//		for(int x : minSnipIndicies) {
+//			minSnipFinal.add(currentDoc.get(x));
+//		}
+//		return minSnipFinal;
+//	}
+//	
+//	public boolean foundAllTerms() {
+//		/*
+//		 * make a counter when all terms are found - first and last can't repeat but the second can
+//		 * first search for what the fist and last terms are - the second term can appear as many times as possible
+//		 * in between
+//		 */
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//
+//	}
+//
+//	public int getStartingPos() {
+//		/*
+//		 * Look for first term - store index of first letter of first term
+//		 */
+//
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//
+//	}
+//
+//	public int getEndingPos() {
+//		/*
+//		 * Look for all terms - store index of last letter of last term
+//		 */
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//
+//	}
+//
+//	public int getLength() {
+//		/*
+//		 *Look for first term - store index of first letter
+//		 *Look for last term - store index of last
+//		 *Subtract index of last letter of last term from first letter of first term
+//		 */
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//
+//	}
+//
+//	public int getPos(int index) {
+//		/*
+//		 * return the index of the arraylist
+//		 */
+//		throw new UnsupportedOperationException("YOU MUST IMPLEMENT THIS!");
+//
+//	}
+//
+//}

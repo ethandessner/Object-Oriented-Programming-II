@@ -1,0 +1,322 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/*
+ * First for loop - go until you find a term in the document
+ * 		- wrap second for loop in an if statement - if a term is found, enter this for loop and start creating a snippet
+ * Second for loop - fill the next terms into the snippet array list until all terms are found
+ * 		- characters in terms will have their index value stored in another array - if a duplicate is found, start again at the second index of termInds
+ *		- if a duplicate is found, start looping at the second term that was found - EX: terms: ABC - AERBA - start at B
+ */
+
+public class MinimumSnippet {
+
+	ArrayList<String> finalSnippet;
+	int finalSnippetLength;
+	Iterable <String> documentList;
+	List<String> termList;
+	ArrayList<String> docList;
+	ArrayList<Integer> indicesOfTerms;
+
+	int start;
+	int end;
+
+	public MinimumSnippet(Iterable<String> document, List<String> terms) {
+		ArrayList<Integer> termIndsFinal = new ArrayList<Integer>();
+		documentList = document;
+		termList = terms;
+		ArrayList<String> snippet = new ArrayList<String>(); //holder for snippet
+		ArrayList<Integer> termInds = new ArrayList<Integer>(terms.size()); //stores indices for snippet terms
+		//	ArrayList<String> minSnipFinal = new ArrayList<String>(); //final snippet
+		//	ArrayList<Integer> minSnipInds = new ArrayList<Integer>(); //this stores the indices for the terms found in the final snippet - can also be split into a min and max
+		ArrayList<String> currentSnippet = new ArrayList<String>();
+		docList = iterConvert(documentList);
+		int currentSnippetLength;
+		int minSnippetLength = docList.size() + 1;
+		int firstTermIndex;
+		//make arrayList with all term indices
+		//the next index if the previous one failed
+		String holder = "";
+		int nextTerm = 0;
+		int y = 0;
+		boolean shouldIncrement = true;
+		int i = 1;
+		boolean reAssign = false;
+		ArrayList<Integer> allTermInds = new ArrayList<Integer>();
+		for(int z = 0; z < docList.size(); z++) {
+			if(terms.contains(docList.get(z))) {
+				allTermInds.add(z);
+			}
+		}
+		System.out.println(allTermInds);
+		if(terms.size() == 0) { //checks to see if the terms list is empty
+			throw new IllegalArgumentException("Terms is empty!");
+		}else if(terms.size() == 1 && docList.containsAll(terms)){ //checks to see if there is only one term in the terms list - snippet is created and mininmum length is created
+			firstTermIndex = docList.indexOf(terms.get(0));
+			snippet.add(docList.get(firstTermIndex));
+			minSnippetLength = 1;
+			System.out.println(snippet);
+			indicesOfTerms = new ArrayList<Integer>();
+			indicesOfTerms.add(firstTermIndex);
+			finalSnippet = snippet;
+			finalSnippetLength = 1;
+			start = firstTermIndex;
+			end = firstTermIndex;
+		}else { //executes if there is the terms list has more than 1 terms
+		//	while(!(snippet.containsAll(terms))) {
+			
+			//nextTerm doesn't need to be incremented - it needs to be set to a new value - set equal to another variable
+			//or nextTerm needs to have conditions in order for it to be incremented
+			for(String current : docList) {
+				for(int x = y; x < docList.size(); x++) {
+					if(terms.contains(current)) {
+						if(snippet.containsAll(terms)) { // first checks if all terms are in the snippet before adding anything more
+							break;
+						}
+						if(reAssign == false) {	
+							holder = docList.get(x);
+						}
+						reAssign = false;
+//problem with nextTerm is that it increments every time there is a term - make it so it only increments once per snippet
+						if(terms.contains(holder)) { //stores the indices of the terms - allows us to start from the second term if there is a duplicate
+							termInds.add(allTermInds.get(nextTerm));
+							if(nextTerm <= terms.size() && shouldIncrement == true) {
+								nextTerm++;
+								shouldIncrement = false;
+							}
+							//System.out.println(termInds);
+						}
+						
+						if(snippet.contains(holder) && terms.contains(holder)) { //checks to see if the string being added is a term duplicate
+							//	fillIn = docList.get(termInds.get(1)); //loop starts over at the second term
+							holder = docList.get(allTermInds.get(i));
+							System.out.println("HOLDER: " + holder);
+							reAssign = true;
+							i++;
+							x--;
+							snippet.clear();
+							termInds.clear();
+							//shouldIncrement = true;
+							//YESnextTerm--;
+						}else { //if the current term is not a duplicate and is not in the snippet yet, then it can be added
+							snippet.add(holder);
+						}
+						
+						System.out.println("Current Snippet: ");
+						System.out.println(snippet);
+						System.out.println("All Term Ids: ");
+						System.out.println(termInds);
+						System.out.println("NEXT TERM: " + nextTerm);
+//						System.out.println("ALL TERM INDICES: ");
+//						System.out.println(allTermInds);
+
+					}
+				}
+				//shouldIncrement = true;
+				y++;
+				if(snippet.containsAll(terms)) {
+					//fix length calc
+					currentSnippetLength = snippet.size();
+					if(currentSnippetLength <= minSnippetLength) {
+						minSnippetLength = currentSnippetLength;
+						currentSnippet = new ArrayList<String>(snippet);
+						start = termInds.get(0);
+						end = termInds.get(termInds.size() - 1);
+						termIndsFinal = new ArrayList<Integer>(termInds);
+					}
+					snippet.clear();
+					//EYSnextTerm--;
+					holder = docList.get(allTermInds.get((allTermInds.size() - 1)));
+					termInds.clear();
+				}
+			}
+			//evaluating snippet size - this should execute once a new snippet has been found
+			System.out.println("SMALLEST SNIPPET: " + currentSnippet);
+			indicesOfTerms = termIndsFinal;
+			finalSnippet = currentSnippet;
+			finalSnippetLength = minSnippetLength;
+			System.out.println("TERM INDS FINAL: " + termIndsFinal);
+			 
+			//}
+		}
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*
+	private int findIndexOfLastTerm(ArrayList<String> file, List<String> fileOfTerms) {
+		int indexOfLastTerm = 0;
+		for(String currElm : file) {
+			if(fileOfTerms.contains(currElm)) {
+				indexOfLastTerm = file.indexOf(currElm);
+			}
+		}
+		return indexOfLastTerm;
+	}
+
+	private ArrayList<String> createMinSnip(ArrayList<Integer> minSnipIndicies, ArrayList<String> currentDoc) {
+		ArrayList<String> minSnipFinal = new ArrayList<String>();
+		for(int x : minSnipIndicies) {
+			minSnipFinal.add(currentDoc.get(x));
+		}
+		return minSnipFinal;
+	}
+	 */
+
+
+	public ArrayList<String> iterConvert(Iterable<String> doc){
+		ArrayList<String> ArrList = new ArrayList<String>();
+		doc = documentList;
+		for(String current : doc) {
+			ArrList.add(current);
+		}
+		return ArrList;
+	}
+
+	public boolean foundAllTerms() {
+		if(finalSnippet.containsAll(termList)) {
+			return true;
+		}
+		return false;
+	}
+
+	public int getStartingPos() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return start;
+
+	}
+
+	public int getEndingPos() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return end;
+
+	}
+
+	public int getLength() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return finalSnippetLength;
+
+	}
+
+	public int getPos(int index) {
+		int x = 0;
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		for(int i = start; i <= end; i++) {
+			if(termList.get(index).equals(docList.get(i))) {
+				x = i;
+			}
+		}
+		return x;
+	}
+
+}
+
+//OLD LOOP
+//				if(terms.contains(current)) { //first term is found - start creating snippet - this might be problematic - check braces
+//					for(String fillIn : docList.subList(docList.indexOf(current), docList.size())) { //snippet is filled in from the start of the to the very end - create a condition to stop when all terms are found
+//						if(snippet.containsAll(terms)) { // first checks if all terms are in the snippet before adding anything more
+//							break;
+//						}
+//						System.out.println(snippet);
+//						System.out.println(termInds);
+//						if(terms.contains(fillIn)) { //stores the indices of the terms - allows us to start from the second term if there is a duplicate
+//							termInds.add(docList.indexOf(fillIn));
+//						}
+//
+//
+//						if(snippet.contains(fillIn) && terms.contains(fillIn)) { //checks to see if the string being added is a term duplicate
+//							//	fillIn = docList.get(termInds.get(1)); //loop starts over at the second term
+//							fillIn = docList.get(allTermInds.get(i));
+//							i++;
+//							snippet.clear();
+//							termInds.clear();
+//							System.out.println("new filler: " + fillIn);
+//
+//							//System.out.println("Fill IN " + docList.get(termInds.get(1)));
+//						}else { //if the current term is not a duplicate and is not in the snippet yet, then it can be added
+//							snippet.add(fillIn);
+//						}
+//
+//
+//					}
+//
+//
+//				}
+
+
+//while loop close
+//NEW FOR LOOP
+//for(int x = docList.indexOf(current); x < docList.size(); x++) {
+//	if(reAssign == false) {
+//	holder = docList.get(x);
+//	}
+//	reAssign = false;
+//	if(snippet.containsAll(terms)) { // first checks if all terms are in the snippet before adding anything more
+//		break;
+//	}	
+//	if(terms.contains(holder)) { //stores the indices of the terms - allows us to start from the second term if there is a duplicate
+//		termInds.add(docList.indexOf(holder));
+//	}
+//	if(snippet.contains(holder) && terms.contains(holder)) { //checks to see if the string being added is a term duplicate
+//		//	fillIn = docList.get(termInds.get(1)); //loop starts over at the second term
+//		holder = docList.get(allTermInds.get(i));
+//		reAssign = true;
+//		i++;
+//		snippet.clear();
+//		termInds.clear();
+//		
+//	
+//		//System.out.println("Fill IN " + docList.get(termInds.get(1)));
+//	}else { //if the current term is not a duplicate and is not in the snippet yet, then it can be added
+//		snippet.add(holder);
+//	}
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

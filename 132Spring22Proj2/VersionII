@@ -1,0 +1,180 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/*
+ * First for loop - go until you find a term in the document
+ * 		- wrap second for loop in an if statement - if a term is found, enter this for loop and start creating a snippet
+ * Second for loop - fill the next terms into the snippet array list until all terms are found
+ * 		- characters in terms will have their index value stored in another array - if a duplicate is found, start again at the second index of termInds
+ *		- if a duplicate is found, start looping at the second term that was found - EX: terms: ABC - AERBA - start at B
+ */
+
+public class MinimumSnippet {
+
+	ArrayList<String> finalSnippet;
+	int finalSnippetLength;
+	Iterable <String> documentList;
+	List<String> termList;
+	ArrayList<String> docList;
+	ArrayList<Integer> indicesOfTerms;
+	int start;
+	int end;
+	
+	public MinimumSnippet(Iterable<String> document, List<String> terms) {
+		documentList = document;
+		termList = terms;
+		ArrayList<String> snippet = new ArrayList<String>(); //holder for snippet
+		ArrayList<Integer> termInds = new ArrayList<Integer>(terms.size()); //stores indices for snippet terms
+		ArrayList<String> minSnipFinal = new ArrayList<String>(); //final snippet
+		ArrayList<Integer> minSnipInds = new ArrayList<Integer>(); //this stores the indices for the terms found in the final snippet - can also be split into a min and max
+		docList = iterConvert(documentList);
+		int snippetMinLength = docList.size() + 1; //ensures that the first snippet created will always been smaller
+		int currentSnipLength;
+		int snipsFound = 0;
+		
+	//	int indexOfLastTerm = findIndexOfLastTerm(docList, terms);
+		
+		Iterator<String> iterator = document.iterator();
+		if(terms.size() == 0) {
+			throw new IllegalArgumentException("Terms is empty!");
+		}else {
+		}for(String current : docList) {
+			System.out.println(current);
+		//	while(iterator.hasNext()) {
+				//checks if the current string is in the list
+				//check if the snippet has all terms yet
+				//checks if snippet has current
+				if(terms.contains(current) && !(snippet.containsAll(terms)) && !(snippet.contains(current))) {
+//					System.out.println(current);
+					//System.out.println("Check");
+					System.out.println(terms.contains(current));
+				//	System.out.println("Check2");
+					System.out.println(!(snippet.containsAll(terms)));
+					//System.out.println("Check3");
+					System.out.println(!(snippet.contains(current)));
+					System.out.println("Bug Check");
+//					System.out.println(termInds);
+//					System.out.println(snippet);
+					
+					snippet.add(current);
+					termInds.add(snippet.indexOf(current));
+					System.out.println(termInds);
+					System.out.println(snippet);
+					//this infinitely loops - if you have already added the current term - it will count it as having a 
+					//duplicate
+				}else if(snippet.contains(current) && !(snippet.containsAll(terms))) {
+					System.out.println("Bug Check2");
+					System.out.println(termInds);
+					System.out.println(snippet);
+					termInds.add(snippet.indexOf(current));
+					snippet.clear();
+					current = docList.get(termInds.get(1));
+					termInds.clear();
+				}if(snippet.containsAll(terms)) {
+					System.out.println("Bug Check3");
+					snipsFound++;
+					//if this is the first snippet found, minSnipLength is set to the length of the current snippet
+					if(snipsFound == 1) {
+//						System.out.println("Bug Check");
+						System.out.println(termInds);
+						System.out.println(snippet);
+						
+						snippetMinLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+						minSnipInds = new ArrayList<Integer>(termInds);
+						minSnipFinal = createMinSnip(minSnipInds, docList);
+						finalSnippet = minSnipFinal;
+						//once another snippet has been found, that length is compared to the length of the previous snippet
+					}else if(snipsFound > 1) {
+						currentSnipLength = (termInds.get(termInds.size() - 1)) - termInds.get(0);
+						if(currentSnipLength < snippetMinLength) {
+							snippetMinLength = currentSnipLength;
+							minSnipInds = new ArrayList<Integer>(termInds);
+							minSnipFinal = createMinSnip(minSnipInds, docList);
+							finalSnippet = minSnipFinal;
+						}
+					}
+					current = snippet.get(1);	
+					termInds.clear();
+					snippet.clear();
+				}	
+		//	}
+		}
+		finalSnippetLength = snippetMinLength;
+		finalSnippet = minSnipFinal;
+		start = minSnipInds.get(0);
+		end = minSnipInds.get(minSnipInds.size() - 1);
+		indicesOfTerms = minSnipInds;
+		System.out.println(finalSnippetLength);
+		System.out.println(finalSnippet);
+		System.out.println(start);
+		System.out.println(end);
+		System.out.println(indicesOfTerms);
+	}
+
+	private int findIndexOfLastTerm(ArrayList<String> file, List<String> fileOfTerms) {
+		int indexOfLastTerm = 0;
+		for(String currElm : file) {
+			if(fileOfTerms.contains(currElm)) {
+				indexOfLastTerm = file.indexOf(currElm);
+			}
+		}
+		return indexOfLastTerm;
+	}
+	
+	private ArrayList<String> createMinSnip(ArrayList<Integer> minSnipIndicies, ArrayList<String> currentDoc) {
+		ArrayList<String> minSnipFinal = new ArrayList<String>();
+		for(int x : minSnipIndicies) {
+			minSnipFinal.add(currentDoc.get(x));
+		}
+		return minSnipFinal;
+	}
+	
+	public ArrayList<String> iterConvert(Iterable<String> doc){
+		ArrayList<String> ArrList = new ArrayList<String>();
+		doc = documentList;
+		for(String current : doc) {
+			ArrList.add(current);
+		}
+		return ArrList;
+	}
+
+	public boolean foundAllTerms() {
+		if(docList.containsAll(termList)) {
+			return true;
+		}
+		return false;
+	}
+
+	public int getStartingPos() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return start;
+
+	}
+
+	public int getEndingPos() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return end;
+
+	}
+
+	public int getLength() {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return finalSnippetLength;
+
+	}
+
+	public int getPos(int index) {
+		if(foundAllTerms() == false) {
+			throw new IllegalArgumentException("Snippet not found");
+		}
+		return indicesOfTerms.get(index);
+	}
+
+}
